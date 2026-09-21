@@ -1,0 +1,1 @@
+export {ApartmentDetailsPage} from './ui/ApartmentDetailsPage.tsx'

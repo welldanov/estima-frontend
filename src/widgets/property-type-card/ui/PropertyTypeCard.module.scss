@@ -1,0 +1,108 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  width: 100%;
+
+  padding: 16px;
+
+  border: 1px solid var(--light-gray);
+  border-radius: 16px;
+
+  background: #fff;
+
+  text-align: left;
+  cursor: pointer;
+
+  transition: border-color 0.2s ease,
+  background-color 0.2s ease,
+  transform 0.2s ease;
+}
+
+.card:hover {
+  border-color: #cbd9f7;
+  background: #f9fbff;
+}
+
+.card:active {
+  transform: scale(0.985);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #eef4ff;
+
+  color: #3478f6;
+}
+
+.content {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.beta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+
+  height: 18px;
+  padding: 0 6px;
+
+  border: 1px solid #e2e6ed;
+  border-radius: 6px;
+
+  background: #f5f6f8;
+
+  color: #7a8495;
+
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+.beta::before {
+  content: "";
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #a8b0bd;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.title {
+  height: 100%;
+  font-size: 16px;
+  font-weight: 600;
+
+  flex: 1;
+}
+
+.arrow {
+  width: 25px;
+  height: 25px;
+
+  fill: var(--dark-blue);
+}

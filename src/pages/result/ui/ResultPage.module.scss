@@ -1,0 +1,312 @@
+.page {
+  min-height: 100dvh;
+
+  display: flex;
+
+  background: #f7f9fc;
+}
+
+.container {
+  width: 100%;
+  max-width: 520px;
+
+  margin: 0 auto;
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+
+  padding-top: 44px;
+  padding-bottom: 24px;
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  background: #e8f7ef;
+
+  box-shadow:
+          0 8px 25px rgb(36 160 96 / 10%);
+}
+
+.successIcon span {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #24a060;
+  color: #fff;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.eyebrow {
+  color: #7f8ba1;
+
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 500;
+
+  text-align: center;
+}
+
+.title {
+  margin: 5px 0 0;
+
+  color: #172746;
+
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 700;
+
+  text-align: center;
+
+  letter-spacing: -0.025em;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+
+  margin-top: 12px;
+
+  color: var(--normal-blue);
+
+  font-size: 42px;
+  line-height: 1.1;
+  font-weight: 750;
+
+  letter-spacing: -0.045em;
+}
+
+.currency {
+  margin-left: 6px;
+
+  font-size: 28px;
+  font-weight: 650;
+}
+
+.address {
+  max-width: 390px;
+
+  margin: 10px auto 0;
+
+  color: #68758d;
+
+  font-size: 14px;
+  line-height: 1.45;
+
+  text-align: center;
+}
+
+.detailsCard {
+  overflow: hidden;
+
+  margin-top: 30px;
+
+  border: 1px solid #e3e8f0;
+  border-radius: 16px;
+
+  background: #fff;
+
+  box-shadow:
+          0 5px 20px rgb(22 39 70 / 4%);
+}
+
+.detailsHeader {
+  min-height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 16px;
+
+  border-bottom: 1px solid #edf0f4;
+
+  color: #263653;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.propertyType {
+  padding: 5px 9px;
+
+  border-radius: 8px;
+
+  background: #edf4ff;
+
+  color: var(--normal-blue);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.detailRow {
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 0 16px;
+
+  border-bottom: 1px solid #f0f2f5;
+
+  color: #7b879b;
+
+  font-size: 14px;
+}
+
+.detailRow:last-child {
+  border-bottom: 0;
+}
+
+.detailRow strong {
+  color: #263653;
+
+  font-weight: 600;
+
+  text-align: right;
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  margin-top: 16px;
+  padding: 12px 13px;
+
+  border-radius: 12px;
+
+  background: #eef4ff;
+}
+
+.noteIcon {
+  flex: 0 0 auto;
+
+  width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 1px;
+
+  border-radius: 50%;
+
+  background: #d8e7ff;
+  color: var(--normal-blue);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.note p {
+  margin: 0;
+
+  color: #61708a;
+
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-top: 24px;
+}
+
+.primaryButton,
+.secondaryButton {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 0 16px;
+
+  border-radius: 14px;
+
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+}
+
+.primaryButton {
+  border: 0;
+
+  background: var(--normal-blue);
+  color: #fff;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.secondaryButton {
+  border: 1px solid #dfe5ee;
+
+  background: #fff;
+  color: #34435e;
+
+  &:hover {
+    background: #f8f9fb;
+  }
+}
+
+@media (max-width: 400px) {
+  .content {
+    padding-top: 30px;
+  }
+
+  .price {
+    font-size: 36px;
+  }
+
+  .currency {
+    font-size: 24px;
+  }
+
+  .detailsCard {
+    margin-top: 24px;
+  }
+}
