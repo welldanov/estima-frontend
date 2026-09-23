@@ -1,164 +1,163 @@
 import {create} from "zustand";
 import {persist, createJSONStorage} from "zustand/middleware";
 
-import type {PropertyType} from "../../../entities/property";
+import type {PropertyType} from "@src/entities/property";
+import type {SelectedAddress} from "@src/entities/address";
+import type {Prediction} from "@src/entities/prediction";
 
-interface ApartmentDetails {
-    areaM2: number | null;
-    rooms: number | null;
-    isStudio: boolean;
-    floor: number | null;
-    floorsTotal: number | null;
+export interface ApartmentDetails {
+  areaM2: number | null;
+  rooms: number | null;
+  isStudio: boolean;
+  floor: number | null;
+  floorsTotal: number | null;
 }
 
 interface HouseDetails {
-    houseAreaM2: number | null;
-    landAreaM2: number | null;
+  houseAreaM2: number | null;
+  landAreaM2: number | null;
 }
 
 interface LandDetails {
-    landAreaM2: number | null;
-    landType: string | null;
-}
-
-interface PredictionResult {
-    propertyType: PropertyType;
-    predictedPrice: number;
-    address: {
-        formattedAddress: string;
-        lat: number;
-        lon: number;
-        distanceToCenterKm: number;
-    };
+  landAreaM2: number | null;
+  landType: string | null;
 }
 
 interface ValuationState {
-    propertyType: PropertyType | null;
+  propertyType: PropertyType | null;
 
-    cityId: number | null;
+  cityId: number | null;
 
-    addressUri: string | null;
+  address: SelectedAddress | null;
 
-    apartment: ApartmentDetails;
-    house: HouseDetails;
-    land: LandDetails;
+  apartment: ApartmentDetails;
+  house: HouseDetails;
+  land: LandDetails;
 
-    result: PredictionResult | null;
+  // Результат всегда соответствует текущим вводным: любой сеттер ввода его сбрасывает.
+  result: Prediction | null;
 
-    setPropertyType: (
-        propertyType: PropertyType,
-    ) => void;
+  setPropertyType: (
+    propertyType: PropertyType,
+  ) => void;
 
-    setCityId: (cityId: number) => void;
+  setCityId: (cityId: number | null) => void;
 
-    setAddressUri: (uri: string) => void;
+  setAddress: (address: SelectedAddress | null) => void;
 
-    setApartmentDetails: (
-        details: Partial<ApartmentDetails>,
-    ) => void;
+  setApartmentDetails: (
+    details: Partial<ApartmentDetails>,
+  ) => void;
 
-    setHouseDetails: (
-        details: Partial<HouseDetails>,
-    ) => void;
+  setHouseDetails: (
+    details: Partial<HouseDetails>,
+  ) => void;
 
-    setLandDetails: (
-        details: Partial<LandDetails>,
-    ) => void;
+  setLandDetails: (
+    details: Partial<LandDetails>,
+  ) => void;
 
-    setResult: (
-        result: PredictionResult,
-    ) => void;
+  setResult: (
+    result: Prediction | null,
+  ) => void;
 
-    reset: () => void;
+  reset: () => void;
 }
 
 const initialState = {
-    propertyType: null,
+  propertyType: null,
 
-    cityId: null,
+  cityId: null,
 
-    addressUri: null,
+  address: null,
 
-    apartment: {
-        areaM2: null,
-        rooms: null,
-        isStudio: false,
-        floor: null,
-        floorsTotal: null,
-    },
+  apartment: {
+    areaM2: null,
+    rooms: null,
+    isStudio: false,
+    floor: null,
+    floorsTotal: null,
+  },
 
-    house: {
-        houseAreaM2: null,
-        landAreaM2: null,
-    },
+  house: {
+    houseAreaM2: null,
+    landAreaM2: null,
+  },
 
-    land: {
-        landAreaM2: null,
-        landType: null,
-    },
+  land: {
+    landAreaM2: null,
+    landType: null,
+  },
 
-    result: null,
+  result: null,
 };
 
 export const useValuationStore =
-    create<ValuationState>()(
-        persist(
-            (set) => ({
-                ...initialState,
+  create<ValuationState>()(
+    persist(
+      (set) => ({
+        ...initialState,
 
-                setPropertyType: (propertyType) =>
-                    set({
-                        propertyType,
-                    }),
+        setPropertyType: (propertyType) =>
+          set({
+            propertyType,
+            result: null,
+          }),
 
-                setCityId: (cityId) =>
-                    set({
-                        cityId,
-                    }),
+        setCityId: (cityId) =>
+          set((state) => (
+            state.cityId === cityId
+              ? state
+              : {cityId, address: null, result: null}
+          )),
 
-                setAddressUri: (addressUri) =>
-                    set({
-                        addressUri,
-                    }),
+        setAddress: (address) =>
+          set({
+            address,
+            result: null,
+          }),
 
-                setApartmentDetails: (details) =>
-                    set((state) => ({
-                        apartment: {
-                            ...state.apartment,
-                            ...details,
-                        },
-                    })),
-
-                setHouseDetails: (details) =>
-                    set((state) => ({
-                        house: {
-                            ...state.house,
-                            ...details,
-                        },
-                    })),
-
-                setLandDetails: (details) =>
-                    set((state) => ({
-                        land: {
-                            ...state.land,
-                            ...details,
-                        },
-                    })),
-
-                setResult: (result) =>
-                    set({
-                        result,
-                    }),
-
-                reset: () =>
-                    set(initialState),
-            }),
-            {
-                name: "estima-valuation",
-
-                storage: createJSONStorage(
-                    () => sessionStorage,
-                ),
+        setApartmentDetails: (details) =>
+          set((state) => ({
+            apartment: {
+              ...state.apartment,
+              ...details,
             },
+            result: null,
+          })),
+
+        setHouseDetails: (details) =>
+          set((state) => ({
+            house: {
+              ...state.house,
+              ...details,
+            },
+            result: null,
+          })),
+
+        setLandDetails: (details) =>
+          set((state) => ({
+            land: {
+              ...state.land,
+              ...details,
+            },
+            result: null,
+          })),
+
+        setResult: (result) =>
+          set({
+            result,
+          }),
+
+        reset: () =>
+          set(initialState),
+      }),
+      {
+        name: "estima-valuation",
+
+        storage: createJSONStorage(
+          () => sessionStorage,
         ),
-    );
+      },
+    ),
+  );

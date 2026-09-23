@@ -1,260 +1,168 @@
+import {useState} from "react";
 import {Navigate, useNavigate} from "react-router-dom";
 
-import {useValuationStore} from "../../../features/valuation/model/valuationStore.ts";
+import {usePrediction, useValuationStore, validateApartment} from "@src/features/valuation";
+import {SparklesIcon} from "@src/shared/assets/icons";
+import {cn, useCountUp} from "@src/shared/lib";
+import {Button, Spinner} from "@src/shared/ui";
 
 import styles from "./ResultPage.module.scss";
 
-function formatPrice(value: number): string {
-    return new Intl.NumberFormat("ru-RU", {
-        maximumFractionDigits: 0,
-    }).format(value);
-}
+const COUNT_UP_MS = 900;
 
-function formatDistance(value: number): string {
-    return new Intl.NumberFormat("ru-RU", {
-        maximumFractionDigits: 1,
-    }).format(value);
+const priceFormat = new Intl.NumberFormat("ru-RU", {maximumFractionDigits: 0});
+const decimalFormat = new Intl.NumberFormat("ru-RU", {maximumFractionDigits: 1});
+
+function roundPrice(value: number): number {
+  return Math.round(value / 1000) * 1000;
 }
 
 export function ResultPage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const result = useValuationStore(
-        (state) => state.result,
-    );
+  const propertyType = useValuationStore((state) => state.propertyType);
+  const address = useValuationStore((state) => state.address);
+  const apartment = useValuationStore((state) => state.apartment);
+  const reset = useValuationStore((state) => state.reset);
 
-    const propertyType = useValuationStore(
-        (state) => state.propertyType,
-    );
+  const prediction = usePrediction();
+  const result = prediction.status === "success" ? prediction.result : null;
 
-    const apartment = useValuationStore(
-        (state) => state.apartment,
-    );
+  const [animate] = useState(() => useValuationStore.getState().result == null);
 
-    if (!result) {
-        return (
-            <Navigate
-                to="/predict"
-                replace
-            />
-        );
-    }
+  const price = result ? roundPrice(result.predictedPrice) : 0;
+  const displayedPrice = useCountUp(price, COUNT_UP_MS, animate);
 
-    const isApartment =
-        result.propertyType === "apartment";
+  if (propertyType !== "apartment") {
+    return <Navigate to="/" replace/>;
+  }
 
-    const roomsLabel = apartment.isStudio
-        ? "Студия"
-        : apartment.rooms != null
-            ? `${apartment.rooms} ${
-                apartment.rooms === 1
-                    ? "комната"
-                    : apartment.rooms >= 2 &&
-                    apartment.rooms <= 4
-                        ? "комнаты"
-                        : "комнат"
-            }`
-            : null;
+  if (!address) {
+    return <Navigate to="/predict/address" replace/>;
+  }
 
-    const handleRestart = () => {
-        useValuationStore.getState().reset();
+  const {areaM2, rooms, isStudio, floor, floorsTotal} = apartment;
 
-        navigate("/", {
-            replace: true,
-        });
-    };
+  // Не только заполненность: «вперёд» в браузере открывает результат и после невалидной правки деталей
+  if (areaM2 == null || floor == null || floorsTotal == null || !validateApartment(apartment).isValid) {
+    return <Navigate to="/predict/details" replace/>;
+  }
 
-    return (
-        <main className={styles.page}>
-            <div className={styles.container}>
-                <div className={styles.content}>
-                    <div className={styles.successIcon}>
-                        <span>✓</span>
-                    </div>
+  const loading = prediction.status === "loading";
 
-                    <div className={styles.eyebrow}>
-                        Предварительная оценка
-                    </div>
+  const roomsLabel = isStudio ? "Студия" : rooms != null && rooms >= 5 ? "5 и более" : String(rooms);
 
-                    <h1 className={styles.title}>
-                        Стоимость объекта
-                    </h1>
+  const handleRestart = () => {
+    reset();
+    navigate("/", {replace: true});
+  };
 
-                    <div className={styles.price}>
-                        {formatPrice(
-                            result.predictedPrice,
-                        )}
+  return (
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <header>
+          <h1 className={styles.title}>Оценка квартиры</h1>
+          <p className={styles.description}>{result?.address.formattedAddress ?? address.label}</p>
+        </header>
 
-                        <span className={styles.currency}>
-                            ₽
-                        </span>
-                    </div>
+        <div className={styles.content}>
+          <section className={styles.priceCard} aria-live="polite" aria-busy={loading}>
+            <span className={styles.caption}>Рыночная стоимость</span>
 
-                    <p className={styles.address}>
-                        {result.address.formattedAddress}
-                    </p>
+            {prediction.status === "loading" && (
+              <>
+                <span className={cn(styles.skeleton, styles.priceSkeleton)}/>
+                <span className={cn(styles.skeleton, styles.perMeterSkeleton)}/>
 
-                    <section
-                        className={
-                            styles.detailsCard
-                        }
-                    >
-                        <div
-                            className={
-                                styles.detailsHeader
-                            }
-                        >
-                            <span>
-                                Параметры объекта
-                            </span>
+                <p className={cn(styles.footer, styles.status)}>
+                  <Spinner className={styles.statusSpinner} label="Рассчитываем стоимость"/>
+                  Рассчитываем стоимость…
+                </p>
+              </>
+            )}
 
-                            <span
-                                className={
-                                    styles.propertyType
-                                }
-                            >
-                                {propertyType ===
-                                "apartment"
-                                    ? "Квартира"
-                                    : propertyType ===
-                                    "house"
-                                        ? "Дом"
-                                        : "Участок"}
-                            </span>
-                        </div>
+            {prediction.status === "success" && (
+              <div className={cn(styles.state, animate && styles.reveal)}>
+                <p className={styles.price}>
+                  {priceFormat.format(displayedPrice)}
+                  <span className={styles.currency}> ₽</span>
+                </p>
 
-                        {isApartment && (
-                            <>
-                                {roomsLabel && (
-                                    <div
-                                        className={
-                                            styles.detailRow
-                                        }
-                                    >
-                                        <span>
-                                            Комнаты
-                                        </span>
+                <p className={cn(styles.footer, styles.perMeter)}>
+                  {priceFormat.format(roundPrice(price / areaM2))} ₽ за м²
+                </p>
+              </div>
+            )}
 
-                                        <strong>
-                                            {roomsLabel}
-                                        </strong>
-                                    </div>
-                                )}
+            {prediction.status === "error" && (
+              <div className={cn(styles.state, styles.error)}>
+                <p className={styles.errorTitle}>Не удалось рассчитать</p>
+                <p className={styles.errorText}>Проверьте подключение к интернету и попробуйте ещё раз</p>
 
-                                {apartment.areaM2 !=
-                                    null && (
-                                        <div
-                                            className={
-                                                styles.detailRow
-                                            }
-                                        >
-                                        <span>
-                                            Площадь
-                                        </span>
-
-                                            <strong>
-                                                {
-                                                    apartment.areaM2
-                                                }{" "}
-                                                м²
-                                            </strong>
-                                        </div>
-                                    )}
-
-                                {apartment.floor !=
-                                    null &&
-                                    apartment.floorsTotal !=
-                                    null && (
-                                        <div
-                                            className={
-                                                styles.detailRow
-                                            }
-                                        >
-                                            <span>
-                                                Этаж
-                                            </span>
-
-                                            <strong>
-                                                {
-                                                    apartment.floor
-                                                }{" "}
-                                                из{" "}
-                                                {
-                                                    apartment.floorsTotal
-                                                }
-                                            </strong>
-                                        </div>
-                                    )}
-                            </>
-                        )}
-
-                        <div
-                            className={
-                                styles.detailRow
-                            }
-                        >
-                            <span>
-                                До центра
-                            </span>
-
-                            <strong>
-                                {formatDistance(
-                                    result.address
-                                        .distanceToCenterKm,
-                                )}{" "}
-                                км
-                            </strong>
-                        </div>
-                    </section>
-
-                    <div className={styles.note}>
-                        <span
-                            className={
-                                styles.noteIcon
-                            }
-                        >
-                            i
-                        </span>
-
-                        <p>
-                            Это ориентировочная оценка
-                            на основе данных модели.
-                            Фактическая стоимость может
-                            отличаться.
-                        </p>
-                    </div>
-
-                    <div
-                        className={
-                            styles.actions
-                        }
-                    >
-                        <button
-                            type="button"
-                            className={
-                                styles.primaryButton
-                            }
-                            onClick={handleRestart}
-                        >
-                            Рассчитать другой объект
-                        </button>
-
-                        <button
-                            type="button"
-                            className={
-                                styles.secondaryButton
-                            }
-                            onClick={() =>
-                                navigate(
-                                    "/predict/details",
-                                )
-                            }
-                        >
-                            Изменить данные
-                        </button>
-                    </div>
+                <div className={styles.footer}>
+                  <Button variant="soft" size="sm" onClick={prediction.retry}>
+                    Повторить
+                  </Button>
                 </div>
+              </div>
+            )}
+          </section>
+
+          <section className={styles.params} aria-labelledby="result-params-title">
+            <h2 id="result-params-title" className={styles.paramsTitle}>Параметры</h2>
+
+            <dl className={styles.list}>
+              <div className={styles.row}>
+                <dt>Комнаты</dt>
+                <dd>{roomsLabel}</dd>
+              </div>
+
+              <div className={styles.row}>
+                <dt>Площадь</dt>
+                <dd>{decimalFormat.format(areaM2)} м²</dd>
+              </div>
+
+              <div className={styles.row}>
+                <dt>Этаж</dt>
+                <dd>{floor} из {floorsTotal}</dd>
+              </div>
+
+              <div className={styles.row}>
+                <dt>До центра</dt>
+                <dd>
+                  {result
+                    ? `${decimalFormat.format(result.address.distanceToCenterKm)} км`
+                    : loading
+                      ? <span className={cn(styles.skeleton, styles.valueSkeleton)}/>
+                      : "—"}
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <aside className={styles.disclaimer} aria-labelledby="result-disclaimer-title">
+            <span className={styles.disclaimerIcon} aria-hidden="true">
+              <SparklesIcon/>
+            </span>
+
+            <div>
+              <h2 id="result-disclaimer-title" className={styles.disclaimerTitle}>
+                Оценку рассчитал ИИ
+              </h2>
+
+              <p className={styles.disclaimerText}>
+                Модель учитывает расположение и параметры квартиры, но не видит ремонт,
+                вид из окон и состояние дома. Используйте результат как ориентир —
+                это не заключение профессионального оценщика.
+              </p>
             </div>
-        </main>
-    );
+          </aside>
+        </div>
+
+        <Button fullWidth className={styles.restart} onClick={handleRestart}>
+          Оценить другой объект
+        </Button>
+      </div>
+    </main>
+  );
 }

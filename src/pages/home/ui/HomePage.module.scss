@@ -1,56 +1,70 @@
 .page {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .container {
+  flex: 1;
+
   display: flex;
   flex-direction: column;
 
-  width: 100%;
-  margin: 0 auto;
-
-  padding: 40px 32px;
+  padding: 8px 32px max(24px, env(safe-area-inset-bottom));
 }
 
-.logo {
-  margin-bottom: 32px;
-}
-
-.logoIcon {
-  width: 120px;
-  height: 30px;
-}
-
-.heading {
+.title {
   font-size: 32px;
   font-weight: 700;
-
-  line-height: 1;
+  line-height: 1.1;
 }
 
 .description {
+  margin-top: 12px;
+
+  color: var(--text-secondary);
   font-size: 15px;
-
-  color: var(--gray);
-
-  margin: 16px 0 0;
+  line-height: 1.4;
 }
 
 .illustration {
-  position: relative;
+  margin-top: 20px;
 
-  width: 100%;
-  aspect-ratio: 1.3 / 1;
+  // Единственный «характерный» акцент главной — поверх общего появления из Layout
+  animation: illustration-enter var(--motion-slow) var(--ease-out) 60ms backwards;
+
+  img {
+    display: block;
+
+    width: 100%;
+    height: auto;
+  }
 }
 
-.illustrationHouse {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.selector {
+  margin-top: 8px;
+}
 
-  object-fit: contain;
-  object-position: center;
+@keyframes illustration-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .illustration {
+    animation: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .container {
+    padding-inline: 16px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
 }

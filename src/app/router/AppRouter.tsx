@@ -1,12 +1,11 @@
 import {Navigate, Route, Routes} from "react-router-dom";
 
-import {Layout} from "../layouts";
+import {Layout} from "@src/app/layouts";
 
-import {HomePage} from "../../pages/home";
-import {AddressPage} from "../../pages/address";
-import {ApartmentDetailsPage} from "../../pages/details";
-import {CalculatingPage} from "../../pages/calculating";
-import {ResultPage} from "../../pages/result";
+import {HomePage} from "@src/pages/home";
+import {AddressPage} from "@src/pages/address";
+import {ApartmentDetailsPage} from "@src/pages/details";
+import {ResultPage} from "@src/pages/result";
 
 
 export function AppRouter() {
@@ -16,7 +15,6 @@ export function AppRouter() {
                 <Route path="/" element={<HomePage/>}/>
                 <Route path="/predict/address" element={<AddressPage/>}/>
                 <Route path="/predict/details" element={<ApartmentDetailsPage/>}/>
-                <Route path="/predict/calculating" element={<CalculatingPage/>}/>
                 <Route path="/predict/result" element={<ResultPage/>}/>
 
                 <Route path="*" element={<Navigate to="/" replace/>}/>

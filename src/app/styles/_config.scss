@@ -1,8 +1,42 @@
 :root {
-  --dark-blue: #17233c;
+  // Бренд
+  --primary: #3a77fa;
+  --primary-hover: #2f68e6;
+  --on-primary: #fff;
+  --primary-text: #2e62d9;
+  --primary-soft: #f2f6ff;
+  --primary-soft-hover: #e8f0ff;
+  --primary-border: #d6e3fd;
+  --primary-border-hover: #b7cdfa;
 
-  --light-blue: #f8fafc;
-  --normal-blue: #3a77fa;
-  --gray: #71809a;
-  --light-gray: #e8edf5;
+  // Текст
+  --text: #17233c;
+  --text-secondary: #5f6d86;
+  --text-muted: #71809a;
+
+  // Поверхности
+  --bg: #f8fafc;
+  --surface: #fff;
+  --surface-muted: #f1f4f9;
+
+  // Рамки
+  --border: #dbe2ee;
+  --border-subtle: #e8edf5;
+  --border-strong: #c5d0e2;
+
+  // Статусы
+  --danger: #d92d20;
+  --danger-bg: #fff0f0;
+  --success: #1e8a52;
+  --success-bg: #e8f7ef;
+
+  // Эффекты (производные от палитры)
+  --focus-ring: rgb(58 119 250 / 16%);
+  --shadow-popover: 0 12px 32px rgb(23 35 60 / 10%);
+
+  // Анимация
+  --motion-fast: 150ms;
+  --motion-base: 220ms;
+  --motion-slow: 450ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 }

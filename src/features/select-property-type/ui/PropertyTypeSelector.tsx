@@ -1,68 +1,70 @@
-import React from "react";
+import type {ReactNode} from "react";
 
-import type {PropertyType} from "../../../entities/property";
+import type {PropertyType} from "@src/entities/property";
 
-import {PropertyTypeCard} from "../../../widgets/property-type-card";
+import {ApartmentIcon, HouseIcon, LandIcon} from "@src/shared/assets/icons";
+import {cn} from "@src/shared/lib";
 
-import {
-    ApartmentIcon,
-    HouseIcon,
-    LandIcon,
-} from "../../../shared/ui";
-
+import {PropertyTypeCard} from "./PropertyTypeCard";
 import styles from "./PropertyTypeSelector.module.scss";
 
 interface PropertyTypeSelectorProps {
-    value: PropertyType | null;
-    onChange: (value: PropertyType) => void;
+  onChange: (type: PropertyType) => void;
+  className?: string;
 }
 
-interface propertyTypesProps {
-    type: PropertyType;
-    title: string;
-    icon: React.ReactNode;
+interface PropertyTypeOption {
+  type: PropertyType;
+  title: string;
+  description: string;
+  icon: ReactNode;
+  beta?: boolean;
 }
 
-
-const propertyTypes: propertyTypesProps[] = [
-    {
-        type: "apartment",
-        title: "Квартира",
-        icon: <ApartmentIcon/>,
-    },
-    {
-        type: "house",
-        title: "Дом",
-        icon: <HouseIcon/>,
-    },
-    {
-        type: "land",
-        title: "Земельный участок",
-        icon: <LandIcon/>,
-    },
-]
+const propertyTypes: PropertyTypeOption[] = [
+  {
+    type: "apartment",
+    title: "Квартира",
+    description: "Новостройка или вторичка",
+    icon: <ApartmentIcon/>,
+  },
+  {
+    type: "house",
+    title: "Дом",
+    description: "Дом, коттедж, таунхаус",
+    icon: <HouseIcon/>,
+    beta: true,
+  },
+  {
+    type: "land",
+    title: "Участок",
+    description: "ИЖС, СНТ, ЛПХ",
+    icon: <LandIcon/>,
+    beta: true,
+  },
+];
 
 export function PropertyTypeSelector({
-                                         value,
-                                         onChange,
-                                     }: PropertyTypeSelectorProps) {
-    return (
-        <section className={styles.section}>
-            <h2 className={styles.title}>
-                Что хотите оценить?
-            </h2>
+  onChange,
+  className,
+}: PropertyTypeSelectorProps) {
+  return (
+    <section className={cn(styles.section, className)}>
+      <h2 className={styles.title}>Что хотите оценить?</h2>
 
-            <div className={styles.list}>
-                {propertyTypes.map((property) => (
-                    <PropertyTypeCard
-                        key={property.type}
-                        type={property.type}
-                        title={property.title}
-                        icon={property.icon}
-                        onClick={onChange}
-                    />
-                ))}
-            </div>
-        </section>
-    );
+      <div className={styles.list}>
+        {propertyTypes.map((property) => (
+          <PropertyTypeCard
+            key={property.type}
+            type={property.type}
+            title={property.title}
+            description={property.description}
+            icon={property.icon}
+            beta={property.beta}
+            onClick={onChange}
+          />
+        ))}
+      </div>
+    </section>
+  );
 }

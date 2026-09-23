@@ -1,438 +1,184 @@
-import {
-    useMemo,
-    type ChangeEvent,
-} from "react";
-import {useNavigate} from "react-router-dom";
+import {useState, type SubmitEventHandler} from "react";
+import {Navigate} from "react-router-dom";
 
-import {useValuationStore} from "../../../features/valuation/model/valuationStore.ts";
+import {
+  APARTMENT_AREA as AREA,
+  APARTMENT_FLOORS as FLOORS,
+  getStepNumber,
+  useStepBack,
+  useStepForward,
+  useValuationStore,
+  validateApartment,
+  VALUATION_STEPS_TOTAL,
+} from "@src/features/valuation";
+import {cn} from "@src/shared/lib";
+import {Button, Field, NumberInput, StepIndicator} from "@src/shared/ui";
 
 import styles from "./ApartmentDetailsPage.module.scss";
 
 const ROOM_OPTIONS = [
-    {
-        label: "Студия",
-        value: "studio",
-    },
-    {
-        label: "1",
-        value: 1,
-    },
-    {
-        label: "2",
-        value: 2,
-    },
-    {
-        label: "3",
-        value: 3,
-    },
-    {
-        label: "4",
-        value: 4,
-    },
-    {
-        label: "5+",
-        value: 5,
-    },
+  {label: "Студия", value: "studio"},
+  {label: "1", value: 1},
+  {label: "2", value: 2},
+  {label: "3", value: 3},
+  {label: "4", value: 4},
+  {label: "5+", value: 5},
 ] as const;
 
+type RoomValue = (typeof ROOM_OPTIONS)[number]["value"];
+type NumberField = "areaM2" | "floor" | "floorsTotal";
+
 export function ApartmentDetailsPage() {
-    const navigate = useNavigate();
+  const stepForward = useStepForward();
+  const stepBack = useStepBack();
 
-    // const address = useValuationStore(
-    //     (state) => state.address,
-    // );
+  const propertyType = useValuationStore((state) => state.propertyType);
+  const address = useValuationStore((state) => state.address);
+  const apartment = useValuationStore((state) => state.apartment);
+  const setApartmentDetails = useValuationStore((state) => state.setApartmentDetails);
 
-    const address = "Рандомный адрес";
+  const [touched, setTouched] = useState<Partial<Record<NumberField, boolean>>>(() => ({
+    areaM2: apartment.areaM2 != null,
+    floor: apartment.floor != null,
+    floorsTotal: apartment.floorsTotal != null,
+  }));
 
-    const apartment = useValuationStore(
-        (state) => state.apartment,
+  if (propertyType !== "apartment") {
+    return <Navigate to="/" replace/>;
+  }
+
+  if (!address) {
+    return <Navigate to="/predict/address" replace/>;
+  }
+
+  const {areaM2, rooms, isStudio, floor, floorsTotal} = apartment;
+
+  const {areaError, floorError, floorsTotalError, isValid: canContinue} = validateApartment(apartment);
+
+  const floorTouched = touched.floor || touched.floorsTotal;
+
+  const touch = (field: NumberField) => () => {
+    setTouched((prev) => ({...prev, [field]: true}));
+  };
+
+  const handleRoomsChange = (value: RoomValue) => {
+    setApartmentDetails(
+      value === "studio"
+        ? {isStudio: true, rooms: null}
+        : {isStudio: false, rooms: value},
     );
+  };
 
-    const setApartmentDetails = useValuationStore(
-        (state) => state.setApartmentDetails,
-    );
 
-    const isValid = useMemo(() => {
-        const {
-            areaM2,
-            floor,
-            floorsTotal,
-        } = apartment;
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
 
-        if (!areaM2 || areaM2 <= 0) {
-            return false;
-        }
+    if (canContinue) {
+      stepForward("/predict/result");
+    }
+  };
 
-        if (apartment.isStudio) {
-            if (!floor || !floorsTotal) {
-                return false;
-            }
-        } else {
-            if (!apartment.rooms || apartment.rooms <= 0) {
-                return false;
-            }
+  return (
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <header>
+          <StepIndicator current={getStepNumber("details")} total={VALUATION_STEPS_TOTAL}/>
 
-            if (!floor || !floorsTotal) {
-                return false;
-            }
-        }
+          <h1 className={styles.title}>Параметры квартиры</h1>
+          <p className={styles.description}>Чем точнее данные, тем точнее оценка</p>
+        </header>
 
-        if (floor > floorsTotal) {
-            return false;
-        }
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
+          <div className={styles.fields}>
+            <section className={styles.address} aria-label="Адрес объекта">
+              <div className={styles.addressText}>
+                <span className={styles.addressCaption}>Адрес</span>
+                <span className={styles.addressLabel} title={address.label}>{address.label}</span>
+              </div>
 
-        return true;
-    }, [apartment]);
+              <Button variant="ghost" size="sm" onClick={() => stepBack("/predict/address")}>
+                Изменить
+              </Button>
+            </section>
 
-    const handleRoomsChange = (
-        value: (typeof ROOM_OPTIONS)[number]["value"],
-    ) => {
-        if (value === "studio") {
-            setApartmentDetails({
-                isStudio: true,
-                rooms: null,
-            });
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>Количество комнат</legend>
 
-            return;
-        }
+              <div className={styles.rooms}>
+                {ROOM_OPTIONS.map((option) => {
+                  const checked = option.value === "studio"
+                    ? isStudio
+                    : !isStudio && rooms === option.value;
 
-        setApartmentDetails({
-            isStudio: false,
-            rooms: value,
-        });
-    };
+                  return (
+                    <label key={option.value} className={cn(styles.room, checked && styles.roomChecked)}>
+                      <input
+                        type="radio"
+                        name="rooms"
+                        className={styles.roomInput}
+                        checked={checked}
+                        onChange={() => handleRoomsChange(option.value)}
+                      />
+                      {option.label}
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
 
-    const handleNumberChange = (
-        field: "areaM2" | "floor" | "floorsTotal",
-        event: ChangeEvent<HTMLInputElement>,
-    ) => {
-        const value = event.target.value;
+            <Field label="Общая площадь" htmlFor="area" error={touched.areaM2 ? areaError : null}>
+              <NumberInput
+                id="area"
+                stepLabel="площадь"
+                enterKeyHint="next"
+                placeholder="Например, 45"
+                suffix="м²"
+                value={areaM2}
+                onChange={(value) => setApartmentDetails({areaM2: value})}
+                onBlur={touch("areaM2")}
+                min={AREA.min}
+                max={AREA.max}
+                fractionDigits={1}
+                invalid={touched.areaM2 && areaError != null}
+              />
+            </Field>
 
-        if (value === "") {
-            setApartmentDetails({
-                [field]: null,
-            });
+            <div className={styles.floorRow}>
+              <Field label="Этаж" htmlFor="floor" error={floorTouched ? floorError : null}>
+                <NumberInput
+                  id="floor"
+                  stepLabel="этаж"
+                  enterKeyHint="next"
+                  value={floor}
+                  onChange={(value) => setApartmentDetails({floor: value})}
+                  onBlur={touch("floor")}
+                  min={FLOORS.min}
+                  max={FLOORS.max}
+                  invalid={floorTouched && floorError != null}
+                />
+              </Field>
 
-            return;
-        }
-
-        const number = Number(value);
-
-        if (!Number.isFinite(number)) {
-            return;
-        }
-
-        setApartmentDetails({
-            [field]: number,
-        });
-    };
-
-    const handleIncrement = (
-        field: "areaM2" | "floor" | "floorsTotal",
-        step = 1,
-    ) => {
-        const currentValue = apartment[field] ?? 0;
-
-        setApartmentDetails({
-            [field]: currentValue + step,
-        });
-    };
-
-    const handleDecrement = (
-        field: "areaM2" | "floor" | "floorsTotal",
-        step = 1,
-        min = 1,
-    ) => {
-        const currentValue = apartment[field];
-
-        if (currentValue == null) {
-            setApartmentDetails({
-                [field]: min,
-            });
-
-            return;
-        }
-
-        setApartmentDetails({
-            [field]: Math.max(min, currentValue - step),
-        });
-    };
-
-    const handleContinue = () => {
-        if (!isValid) {
-            return;
-        }
-
-        navigate("/predict/calculating");
-    };
-
-    return (
-        <main className={styles.page}>
-            <div className={styles.container}>
-                <button
-                    type="button"
-                    className={styles.backButton}
-                    onClick={() => navigate(-1)}
-                    aria-label="Назад"
-                >
-                    ←
-                </button>
-
-                <div className={styles.content}>
-                    <div className={styles.header}>
-                        <div className={styles.icon}>
-                            🏢
-                        </div>
-
-                        <h1 className={styles.title}>
-                            Квартира
-                        </h1>
-
-                        <p className={styles.description}>
-                            Укажите характеристики объекта
-                        </p>
-                    </div>
-
-                    <section className={styles.form}>
-                        <div className={styles.field}>
-                            <label className={styles.label}>
-                                Адрес
-                            </label>
-
-                            <div className={styles.address}>
-                                <span>
-                                    {address || "Адрес не указан"}
-                                </span>
-
-                                <button
-                                    type="button"
-                                    className={styles.clearButton}
-                                    onClick={() => navigate(-1)}
-                                    aria-label="Изменить адрес"
-                                >
-                                    ×
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className={styles.field}>
-                            <div className={styles.label}>
-                                Количество комнат
-                            </div>
-
-                            <div className={styles.rooms}>
-                                {ROOM_OPTIONS.map((option) => {
-                                    const selected =
-                                        option.value === "studio"
-                                            ? apartment.isStudio
-                                            : !apartment.isStudio &&
-                                            apartment.rooms === option.value;
-
-                                    return (
-                                        <button
-                                            key={String(option.value)}
-                                            type="button"
-                                            className={`${styles.roomButton} ${
-                                                selected
-                                                    ? styles.roomButtonActive
-                                                    : ""
-                                            }`}
-                                            onClick={() =>
-                                                handleRoomsChange(
-                                                    option.value,
-                                                )
-                                            }
-                                        >
-                                            {option.label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        <div className={styles.field}>
-                            <label
-                                htmlFor="area"
-                                className={styles.label}
-                            >
-                                Общая площадь, м²
-                            </label>
-
-                            <div className={styles.numberInput}>
-                                <input
-                                    id="area"
-                                    type="number"
-                                    min={1}
-                                    step={1}
-                                    value={apartment.areaM2 ?? ""}
-                                    onChange={(event) =>
-                                        handleNumberChange(
-                                            "areaM2",
-                                            event,
-                                        )
-                                    }
-                                />
-
-                                <div className={styles.numberActions}>
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            handleDecrement(
-                                                "areaM2",
-                                            )
-                                        }
-                                        aria-label="Уменьшить площадь"
-                                    >
-                                        −
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            handleIncrement(
-                                                "areaM2",
-                                            )
-                                        }
-                                        aria-label="Увеличить площадь"
-                                    >
-                                        +
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className={styles.field}>
-                            <div className={styles.label}>
-                                Этаж
-                            </div>
-
-                            <div className={styles.floorRow}>
-                                <div className={styles.numberInput}>
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        max={
-                                            apartment.floorsTotal ??
-                                            undefined
-                                        }
-                                        value={
-                                            apartment.floor ?? ""
-                                        }
-                                        onChange={(event) =>
-                                            handleNumberChange(
-                                                "floor",
-                                                event,
-                                            )
-                                        }
-                                        aria-label="Этаж"
-                                    />
-
-                                    <div
-                                        className={
-                                            styles.numberActions
-                                        }
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleDecrement(
-                                                    "floor",
-                                                )
-                                            }
-                                            aria-label="Уменьшить этаж"
-                                        >
-                                            −
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleIncrement(
-                                                    "floor",
-                                                )
-                                            }
-                                            aria-label="Увеличить этаж"
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <span className={styles.floorDivider}>
-                                    из
-                                </span>
-
-                                <div className={styles.numberInput}>
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        value={
-                                            apartment.floorsTotal ??
-                                            ""
-                                        }
-                                        onChange={(event) =>
-                                            handleNumberChange(
-                                                "floorsTotal",
-                                                event,
-                                            )
-                                        }
-                                        aria-label="Этажей в доме"
-                                    />
-
-                                    <div
-                                        className={
-                                            styles.numberActions
-                                        }
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleDecrement(
-                                                    "floorsTotal",
-                                                )
-                                            }
-                                            aria-label="Уменьшить количество этажей"
-                                        >
-                                            −
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleIncrement(
-                                                    "floorsTotal",
-                                                )
-                                            }
-                                            aria-label="Увеличить количество этажей"
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {apartment.floor &&
-                                apartment.floorsTotal &&
-                                apartment.floor >
-                                apartment.floorsTotal && (
-                                    <p className={styles.validationError}>
-                                        Этаж не может быть выше
-                                        этажности дома
-                                    </p>
-                                )}
-                        </div>
-                    </section>
-
-                    <button
-                        type="button"
-                        className={styles.continueButton}
-                        disabled={!isValid}
-                        onClick={handleContinue}
-                    >
-                        Продолжить
-                    </button>
-                </div>
+              <Field label="Этажей в доме" htmlFor="floors-total" error={floorTouched ? floorsTotalError : null}>
+                <NumberInput
+                  id="floors-total"
+                  stepLabel="этажность"
+                  enterKeyHint="done"
+                  value={floorsTotal}
+                  onChange={(value) => setApartmentDetails({floorsTotal: value})}
+                  onBlur={touch("floorsTotal")}
+                  min={FLOORS.min}
+                  max={FLOORS.max}
+                  invalid={floorTouched && (floorsTotalError ?? floorError) != null}
+                />
+              </Field>
             </div>
-        </main>
-    );
+          </div>
+
+          <Button type="submit" fullWidth disabled={!canContinue} className={styles.submit}>
+            Рассчитать стоимость
+          </Button>
+        </form>
+      </div>
+    </main>
+  );
 }

@@ -18,5 +18,14 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // Между слайсами/слоями — только через @src, относительные пути — внутри слайса
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          group: ['../../*'],
+          message: 'Импорт из другого слайса или слоя — используйте @src/...',
+        }],
+      }],
+    },
   },
 ])

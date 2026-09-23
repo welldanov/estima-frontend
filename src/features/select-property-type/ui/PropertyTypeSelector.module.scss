@@ -2,15 +2,14 @@
 }
 
 .title {
+  margin-bottom: 12px;
+
   font-size: 18px;
   font-weight: 700;
-
-  margin-bottom: 16px;
-
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }

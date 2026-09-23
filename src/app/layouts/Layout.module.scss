@@ -2,5 +2,30 @@
   min-height: 100dvh;
   max-width: 600px;
 
+  display: flex;
+  flex-direction: column;
+
   margin: 0 auto;
+}
+
+// Шапка + страница делят 100dvh: страница растягивается на остаток, а не задаёт свой min-height
+.page {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  animation: page-enter var(--motion-base) var(--ease-out);
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    animation: none;
+  }
 }
