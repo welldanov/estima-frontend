@@ -1,0 +1,90 @@
+.autocomplete {
+  position: relative;
+}
+
+.list {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+
+  // --available-height — место до клавиатуры, считается в Autocomplete.tsx
+  max-height: min(288px, var(--available-height, 288px));
+  padding: 6px;
+  overflow-y: auto;
+
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+
+  background: var(--surface);
+  box-shadow: var(--shadow-popover);
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+.optionActive {
+  background: var(--primary-soft);
+}
+
+.optionLabel {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.optionDescription {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.empty {
+  padding: 10px 12px;
+
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: -4px;
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-out),
+  color var(--motion-fast) var(--ease-out);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: var(--surface-muted);
+    color: var(--text-secondary);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--focus-ring);
+  }
+}

@@ -1,0 +1,51 @@
+// Кнопки ± прижаты к правому краю рамки.
+.control {
+  padding-right: 8px;
+}
+
+// Суффикс и кнопки лежат в одном endSlot, gap слота между ними не действует.
+.suffix {
+  margin-right: 12px;
+
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.stepper {
+  display: flex;
+  gap: 2px;
+}
+
+.stepButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 40px;
+
+  border-radius: 10px;
+
+  background: var(--surface-muted);
+  color: var(--text);
+
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+
+  cursor: pointer;
+  touch-action: manipulation; // без задержки/зума на двойной тап
+
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--primary-soft-hover);
+    color: var(--primary-text);
+  }
+
+  &:disabled {
+    color: var(--text-muted);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

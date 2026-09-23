@@ -1,0 +1,29 @@
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  align-self: flex-start;
+  margin-bottom: 8px;
+
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.hint,
+.error {
+  margin-top: 6px;
+
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.hint {
+  color: var(--text-secondary);
+}
+
+.error {
+  color: var(--danger);
+}

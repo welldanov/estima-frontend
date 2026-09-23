@@ -1,0 +1,45 @@
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  transition: background-color var(--motion-fast) var(--ease-out),
+  transform var(--motion-fast) var(--ease-out);
+
+  @media (hover: hover) {
+    &:hover {
+      background: var(--surface-muted);
+    }
+  }
+
+  &:active {
+    background: var(--surface-muted);
+    transform: scale(0.92);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 4px var(--focus-ring);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+
+  fill: currentColor;
+  transform: rotate(180deg);
+}

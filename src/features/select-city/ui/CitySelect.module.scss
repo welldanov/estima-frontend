@@ -1,0 +1,10 @@
+.chevron {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+
+  color: var(--text-muted);
+  fill: currentColor;
+  transform: rotate(90deg);
+  pointer-events: none;
+}

@@ -1,0 +1,71 @@
+@mixin control {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  width: 100%;
+  min-height: 56px;
+  padding: 0 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+}
+
+@mixin control-invalid {
+  border-color: var(--danger);
+
+  &:hover {
+    border-color: var(--danger);
+  }
+
+  &:focus-within {
+    border-color: var(--danger);
+  }
+}
+
+@mixin control-disabled {
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  cursor: not-allowed;
+
+  &:hover {
+    border-color: var(--border);
+  }
+}
+
+@mixin control-native {
+  flex: 1;
+  min-width: 0;
+  height: 54px;
+
+  border: 0;
+  outline: none;
+  background: transparent;
+
+  color: inherit;
+  font: inherit;
+  font-size: 16px;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}

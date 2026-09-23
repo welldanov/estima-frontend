@@ -1,0 +1,40 @@
+@use "../styles/control";
+
+.control {
+  @include control.control;
+}
+
+.invalid {
+  @include control.control-invalid;
+}
+
+.disabled {
+  @include control.control-disabled;
+}
+
+.input {
+  @include control.control-native;
+
+  &[type="number"] {
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      margin: 0;
+      appearance: none;
+    }
+  }
+}
+
+.fadeEnd:not(:focus) {
+  mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 4px;
+
+  color: var(--text-muted);
+}
