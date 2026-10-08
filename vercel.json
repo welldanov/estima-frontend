@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://estima-api-4i30.onrender.com/api/:path*" },
+    { "source": "/api/:path*", "destination": "hhttps://estima-backend.onrender.com/api/:path*" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
