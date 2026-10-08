@@ -1,1 +1,1 @@
-export {ApiError, request, isAbortError} from "./request";
+export {ApiError, request, isAbortError, getErrorMessage} from "./request";

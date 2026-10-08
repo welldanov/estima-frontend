@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 
 import {getCities, type City} from "@src/entities/city";
-import {isAbortError} from "@src/shared/api";
+import {getErrorMessage, isAbortError} from "@src/shared/api";
 
 interface CitiesState {
   cities: City[];
@@ -29,7 +29,7 @@ export function useCities(): CitiesState {
         setState({
           cities: [],
           isLoading: false,
-          error: "Не удалось загрузить список городов",
+          error: getErrorMessage(error, "Не удалось загрузить список городов"),
         });
       });
 

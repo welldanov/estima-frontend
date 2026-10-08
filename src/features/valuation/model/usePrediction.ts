@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 
 import {predictApartment} from "@src/entities/prediction";
 import type {Prediction} from "@src/entities/prediction";
-import {isAbortError} from "@src/shared/api";
+import {ApiError, getErrorMessage, isAbortError} from "@src/shared/api";
 
 import {validateApartment} from "./apartment";
 import {useValuationStore} from "./valuationStore";
@@ -13,7 +13,17 @@ const MIN_LOADING_MS = 800;
 export type PredictionState =
   | {status: "loading"}
   | {status: "success"; result: Prediction}
-  | {status: "error"; retry: () => void};
+  /**
+   * `retry` — только для сбоев сети/сервера (5xx). Ошибки 4xx (адрес без дома, вне зоны покрытия,
+   * город без модели) повтором не лечатся — пользователь должен сменить адрес.
+   */
+  | {status: "error"; message: string; retry: (() => void) | null};
+
+interface Failure {
+  attempt: number;
+  message: string;
+  retryable: boolean;
+}
 
 function delay(ms: number, signal: AbortSignal): Promise<void> {
   return new Promise((resolve) => {
@@ -34,7 +44,7 @@ export function usePrediction(): PredictionState {
   const result = useValuationStore((s) => s.result);
   const setResult = useValuationStore((s) => s.setResult);
 
-  const [failedAttempt, setFailedAttempt] = useState<number | null>(null);
+  const [failure, setFailure] = useState<Failure | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   const {areaM2, rooms, isStudio, floor, floorsTotal} = apartment;
@@ -59,7 +69,13 @@ export function usePrediction(): PredictionState {
       if (response.status === "fulfilled") {
         setResult(response.value);
       } else if (!isAbortError(response.reason)) {
-        setFailedAttempt(attempt);
+        const error: unknown = response.reason;
+
+        setFailure({
+          attempt,
+          message: getErrorMessage(error, "Проверьте подключение к интернету и попробуйте ещё раз"),
+          retryable: !(error instanceof ApiError) || error.status >= 500,
+        });
       }
     });
 
@@ -70,8 +86,12 @@ export function usePrediction(): PredictionState {
     return {status: "success", result};
   }
 
-  if (failedAttempt === attempt) {
-    return {status: "error", retry: () => setAttempt((value) => value + 1)};
+  if (failure?.attempt === attempt) {
+    return {
+      status: "error",
+      message: failure.message,
+      retry: failure.retryable ? () => setAttempt((value) => value + 1) : null,
+    };
   }
 
   return {status: "loading"};

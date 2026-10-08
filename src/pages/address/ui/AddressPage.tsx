@@ -44,11 +44,12 @@ export function AddressPage() {
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           <div className={styles.fields}>
-            <CitySelect value={cityId} onChange={setCityId}/>
+            <CitySelect propertyType={propertyType} value={cityId} onChange={setCityId}/>
 
             <AddressSearch
               key={cityId ?? "no-city"}
               cityId={cityId}
+              propertyType={propertyType}
               value={address}
               onChange={setAddress}
             />

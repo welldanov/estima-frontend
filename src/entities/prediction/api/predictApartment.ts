@@ -6,6 +6,7 @@ interface PredictionResponse {
   predicted_price: number;
   address: {
     formatted_address: string;
+    kind: string;
     lat: number;
     lon: number;
     distance_to_center_km: number;
@@ -36,6 +37,7 @@ export async function predictApartment(
     predictedPrice: data.predicted_price,
     address: {
       formattedAddress: data.address.formatted_address,
+      kind: data.address.kind,
       lat: data.address.lat,
       lon: data.address.lon,
       distanceToCenterKm: data.address.distance_to_center_km,

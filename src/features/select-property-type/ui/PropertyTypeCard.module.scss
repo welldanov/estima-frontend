@@ -28,7 +28,6 @@
 
         .arrow {
           color: var(--primary);
-          transform: translateX(2px);
         }
       }
     }
@@ -137,7 +136,7 @@
   fill: currentColor;
   color: var(--text-muted);
 
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,7 @@
 import {useId, useState} from "react";
 
+import type {PropertyType} from "@src/entities/property";
+
 import {ArrowIcon} from "@src/shared/assets/icons";
 import {Autocomplete, Field} from "@src/shared/ui";
 
@@ -8,13 +10,17 @@ import {useCities} from "../model/useCities";
 import styles from "./CitySelect.module.scss";
 
 interface CitySelectProps {
+  /** Показываются только города, где есть модель для этого типа. */
+  propertyType: PropertyType;
   value: number | null;
   onChange: (cityId: number | null) => void;
 }
 
-export function CitySelect({value, onChange}: CitySelectProps) {
+export function CitySelect({propertyType, value, onChange}: CitySelectProps) {
   const id = useId();
-  const {cities, isLoading, error} = useCities();
+  const {cities: allCities, isLoading, error} = useCities();
+
+  const cities = allCities.filter((city) => city.propertyTypes.includes(propertyType));
 
   const selectedName = cities.find((city) => city.id === value)?.name ?? "";
 

@@ -97,12 +97,18 @@ export function ResultPage() {
             {prediction.status === "error" && (
               <div className={cn(styles.state, styles.error)}>
                 <p className={styles.errorTitle}>Не удалось рассчитать</p>
-                <p className={styles.errorText}>Проверьте подключение к интернету и попробуйте ещё раз</p>
+                <p className={styles.errorText}>{prediction.message}</p>
 
                 <div className={styles.footer}>
-                  <Button variant="soft" size="sm" onClick={prediction.retry}>
-                    Повторить
-                  </Button>
+                  {prediction.retry ? (
+                    <Button variant="soft" size="sm" onClick={prediction.retry}>
+                      Повторить
+                    </Button>
+                  ) : (
+                    <Button variant="soft" size="sm" onClick={() => navigate("/predict/address")}>
+                      Изменить адрес
+                    </Button>
+                  )}
                 </div>
               </div>
             )}

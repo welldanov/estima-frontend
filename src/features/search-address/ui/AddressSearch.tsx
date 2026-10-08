@@ -1,21 +1,23 @@
 import {useId, useState} from "react";
 
 import {formatAddress, type SelectedAddress} from "@src/entities/address";
+import type {PropertyType} from "@src/entities/property";
 import {Autocomplete, Field} from "@src/shared/ui";
 
 import {useAddressSuggestions} from "../model/useAddressSuggestions";
 
 interface AddressSearchProps {
   cityId: number | null;
+  propertyType: PropertyType;
   value: SelectedAddress | null;
   onChange: (address: SelectedAddress | null) => void;
 }
 
-export function AddressSearch({cityId, value, onChange}: AddressSearchProps) {
+export function AddressSearch({cityId, propertyType, value, onChange}: AddressSearchProps) {
   const id = useId();
   const [query, setQuery] = useState(value?.label ?? "");
 
-  const {items, isLoading, isEmpty, isError} = useAddressSuggestions(cityId, query, value === null);
+  const {items, isLoading, isEmpty, error} = useAddressSuggestions(cityId, propertyType, query, value === null);
 
   const isDisabled = cityId == null;
 
@@ -23,7 +25,7 @@ export function AddressSearch({cityId, value, onChange}: AddressSearchProps) {
     <Field
       label="Адрес"
       htmlFor={id}
-      error={isError ? "Не удалось загрузить адреса, попробуйте ещё раз" : undefined}
+      error={error}
     >
       <Autocomplete
         id={id}
@@ -38,7 +40,7 @@ export function AddressSearch({cityId, value, onChange}: AddressSearchProps) {
         getItemDescription={(item) => item.subtitle}
         loading={isLoading}
         emptyText={isEmpty ? "Ничего не найдено" : undefined}
-        invalid={isError}
+        invalid={error != null}
         onValueChange={(nextQuery) => {
           setQuery(nextQuery);
 

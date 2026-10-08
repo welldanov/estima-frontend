@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 
 import {searchAddresses, type AddressSuggestion} from "@src/entities/address";
-import {isAbortError} from "@src/shared/api";
+import type {PropertyType} from "@src/entities/property";
+import {getErrorMessage, isAbortError} from "@src/shared/api";
 import {useDebouncedValue} from "@src/shared/lib";
 
 const MIN_QUERY_LENGTH = 2;
@@ -10,7 +11,8 @@ const DEBOUNCE_MS = 300;
 interface SearchResult {
   key: string;
   items: AddressSuggestion[];
-  failed: boolean;
+  /** Текст ошибки (503 — исчерпан дневной лимит Yandex, 502 — Yandex недоступен), null — успех. */
+  error: string | null;
 }
 
 /**
@@ -18,7 +20,12 @@ interface SearchResult {
  * Загрузка выводится из того, к какому запросу относится последний ответ,
  * поэтому setState синхронно в эффекте не нужен.
  */
-export function useAddressSuggestions(cityId: number | null, query: string, enabled: boolean) {
+export function useAddressSuggestions(
+  cityId: number | null,
+  propertyType: PropertyType,
+  query: string,
+  enabled: boolean,
+) {
   const trimmedQuery = query.trim();
   const debouncedQuery = useDebouncedValue(trimmedQuery, DEBOUNCE_MS);
 
@@ -27,7 +34,7 @@ export function useAddressSuggestions(cityId: number | null, query: string, enab
     && cityId != null
     && trimmedQuery.length >= MIN_QUERY_LENGTH
     && debouncedQuery.length >= MIN_QUERY_LENGTH;
-  const requestKey = canSearch ? `${cityId}:${debouncedQuery}` : null;
+  const requestKey = canSearch ? `${cityId}:${propertyType}:${debouncedQuery}` : null;
 
   const [result, setResult] = useState<SearchResult | null>(null);
 
@@ -38,16 +45,20 @@ export function useAddressSuggestions(cityId: number | null, query: string, enab
 
     const controller = new AbortController();
 
-    searchAddresses({cityId, query: debouncedQuery}, controller.signal)
-      .then((items) => setResult({key: requestKey, items, failed: false}))
+    searchAddresses({cityId, propertyType, query: debouncedQuery}, controller.signal)
+      .then((items) => setResult({key: requestKey, items, error: null}))
       .catch((error: unknown) => {
         if (!isAbortError(error)) {
-          setResult({key: requestKey, items: [], failed: true});
+          setResult({
+            key: requestKey,
+            items: [],
+            error: getErrorMessage(error, "Не удалось загрузить адреса, попробуйте ещё раз"),
+          });
         }
       });
 
     return () => controller.abort();
-  }, [requestKey, cityId, debouncedQuery]);
+  }, [requestKey, cityId, propertyType, debouncedQuery]);
 
   const isFresh = requestKey !== null && result?.key === requestKey;
   const isTyping = enabled
@@ -57,7 +68,7 @@ export function useAddressSuggestions(cityId: number | null, query: string, enab
   return {
     items: isFresh ? result.items : [],
     isLoading: isTyping || (requestKey !== null && !isFresh),
-    isEmpty: isFresh && !result.failed && result.items.length === 0,
-    isError: isFresh && result.failed,
+    isEmpty: isFresh && result.error === null && result.items.length === 0,
+    error: isFresh ? result.error : null,
   };
 }

@@ -13,6 +13,8 @@ export interface Prediction {
   predictedPrice: number;
   address: {
     formattedAddress: string;
+    /** Точность геокодинга Yandex: house | street | district | locality (для квартиры всегда house). */
+    kind: string;
     lat: number;
     lon: number;
     distanceToCenterKm: number;
