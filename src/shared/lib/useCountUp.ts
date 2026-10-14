@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 

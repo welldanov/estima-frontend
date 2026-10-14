@@ -1,10 +1,10 @@
-import {useId, useState} from "react";
+import { useId, useState } from "react";
 
-import {formatAddress, type SelectedAddress} from "@src/entities/address";
-import type {PropertyType} from "@src/entities/property";
-import {Autocomplete, Field} from "@src/shared/ui";
+import { formatAddress, type SelectedAddress } from "@src/entities/address";
+import type { PropertyType } from "@src/entities/property";
+import { Autocomplete, Field } from "@src/shared/ui";
 
-import {useAddressSuggestions} from "../model/useAddressSuggestions";
+import { useAddressSuggestions } from "../model/useAddressSuggestions";
 
 interface AddressSearchProps {
   cityId: number | null;
@@ -13,20 +13,21 @@ interface AddressSearchProps {
   onChange: (address: SelectedAddress | null) => void;
 }
 
-export function AddressSearch({cityId, propertyType, value, onChange}: AddressSearchProps) {
+export function AddressSearch({ cityId, propertyType, value, onChange }: AddressSearchProps) {
   const id = useId();
   const [query, setQuery] = useState(value?.label ?? "");
 
-  const {items, isLoading, isEmpty, error} = useAddressSuggestions(cityId, propertyType, query, value === null);
+  const { items, isLoading, isEmpty, error } = useAddressSuggestions(
+    cityId,
+    propertyType,
+    query,
+    value === null,
+  );
 
   const isDisabled = cityId == null;
 
   return (
-    <Field
-      label="Адрес"
-      htmlFor={id}
-      error={error}
-    >
+    <Field label="Адрес" htmlFor={id} error={error}>
       <Autocomplete
         id={id}
         name="address-search"
@@ -52,7 +53,7 @@ export function AddressSearch({cityId, propertyType, value, onChange}: AddressSe
           const label = formatAddress(item);
 
           setQuery(label);
-          onChange({uri: item.uri, label});
+          onChange({ uri: item.uri, label });
         }}
         clearable={value != null}
         onClear={() => {

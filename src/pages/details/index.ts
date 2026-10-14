@@ -1,1 +1,1 @@
-export {ApartmentDetailsPage} from "./ui/ApartmentDetailsPage";
+export { ApartmentDetailsPage } from "./ui/ApartmentDetailsPage";

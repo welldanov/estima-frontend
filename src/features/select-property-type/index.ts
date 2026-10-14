@@ -1,3 +1,1 @@
-export {
-    PropertyTypeSelector,
-} from "./ui/PropertyTypeSelector";
+export { PropertyTypeSelector } from "./ui/PropertyTypeSelector";

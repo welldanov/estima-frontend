@@ -1,1 +1,1 @@
-export {AddressSearch} from "./ui/AddressSearch";
+export { AddressSearch } from "./ui/AddressSearch";

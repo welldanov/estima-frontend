@@ -1,17 +1,17 @@
-import {useState} from "react";
-import {Navigate, useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
-import {usePrediction, useValuationStore, validateApartment} from "@src/features/valuation";
-import {SparklesIcon} from "@src/shared/assets/icons";
-import {cn, useCountUp} from "@src/shared/lib";
-import {Button, Spinner} from "@src/shared/ui";
+import { usePrediction, useValuationStore, validateApartment } from "@src/features/valuation";
+import { SparklesIcon } from "@src/shared/assets/icons";
+import { cn, useCountUp } from "@src/shared/lib";
+import { Button, Spinner } from "@src/shared/ui";
 
 import styles from "./ResultPage.module.scss";
 
 const COUNT_UP_MS = 900;
 
-const priceFormat = new Intl.NumberFormat("ru-RU", {maximumFractionDigits: 0});
-const decimalFormat = new Intl.NumberFormat("ru-RU", {maximumFractionDigits: 1});
+const priceFormat = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 });
+const decimalFormat = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 1 });
 
 function roundPrice(value: number): number {
   return Math.round(value / 1000) * 1000;
@@ -34,27 +34,36 @@ export function ResultPage() {
   const displayedPrice = useCountUp(price, COUNT_UP_MS, animate);
 
   if (propertyType !== "apartment") {
-    return <Navigate to="/" replace/>;
+    return <Navigate to="/" replace />;
   }
 
   if (!address) {
-    return <Navigate to="/predict/address" replace/>;
+    return <Navigate to="/predict/address" replace />;
   }
 
-  const {areaM2, rooms, isStudio, floor, floorsTotal} = apartment;
+  const { areaM2, rooms, isStudio, floor, floorsTotal } = apartment;
 
   // Не только заполненность: «вперёд» в браузере открывает результат и после невалидной правки деталей
-  if (areaM2 == null || floor == null || floorsTotal == null || !validateApartment(apartment).isValid) {
-    return <Navigate to="/predict/details" replace/>;
+  if (
+    areaM2 == null ||
+    floor == null ||
+    floorsTotal == null ||
+    !validateApartment(apartment).isValid
+  ) {
+    return <Navigate to="/predict/details" replace />;
   }
 
   const loading = prediction.status === "loading";
 
-  const roomsLabel = isStudio ? "Студия" : rooms != null && rooms >= 5 ? "5 и более" : String(rooms);
+  const roomsLabel = isStudio
+    ? "Студия"
+    : rooms != null && rooms >= 5
+      ? "5 и более"
+      : String(rooms);
 
   const handleRestart = () => {
     reset();
-    navigate("/", {replace: true});
+    navigate("/", { replace: true });
   };
 
   return (
@@ -71,11 +80,11 @@ export function ResultPage() {
 
             {prediction.status === "loading" && (
               <>
-                <span className={cn(styles.skeleton, styles.priceSkeleton)}/>
-                <span className={cn(styles.skeleton, styles.perMeterSkeleton)}/>
+                <span className={cn(styles.skeleton, styles.priceSkeleton)} />
+                <span className={cn(styles.skeleton, styles.perMeterSkeleton)} />
 
                 <p className={cn(styles.footer, styles.status)}>
-                  <Spinner className={styles.statusSpinner} label="Рассчитываем стоимость"/>
+                  <Spinner className={styles.statusSpinner} label="Рассчитываем стоимость" />
                   Рассчитываем стоимость…
                 </p>
               </>
@@ -115,7 +124,9 @@ export function ResultPage() {
           </section>
 
           <section className={styles.params} aria-labelledby="result-params-title">
-            <h2 id="result-params-title" className={styles.paramsTitle}>Параметры</h2>
+            <h2 id="result-params-title" className={styles.paramsTitle}>
+              Параметры
+            </h2>
 
             <dl className={styles.list}>
               <div className={styles.row}>
@@ -130,17 +141,21 @@ export function ResultPage() {
 
               <div className={styles.row}>
                 <dt>Этаж</dt>
-                <dd>{floor} из {floorsTotal}</dd>
+                <dd>
+                  {floor} из {floorsTotal}
+                </dd>
               </div>
 
               <div className={styles.row}>
                 <dt>До центра</dt>
                 <dd>
-                  {result
-                    ? `${decimalFormat.format(result.address.distanceToCenterKm)} км`
-                    : loading
-                      ? <span className={cn(styles.skeleton, styles.valueSkeleton)}/>
-                      : "—"}
+                  {result ? (
+                    `${decimalFormat.format(result.address.distanceToCenterKm)} км`
+                  ) : loading ? (
+                    <span className={cn(styles.skeleton, styles.valueSkeleton)} />
+                  ) : (
+                    "—"
+                  )}
                 </dd>
               </div>
             </dl>
@@ -148,7 +163,7 @@ export function ResultPage() {
 
           <aside className={styles.disclaimer} aria-labelledby="result-disclaimer-title">
             <span className={styles.disclaimerIcon} aria-hidden="true">
-              <SparklesIcon/>
+              <SparklesIcon />
             </span>
 
             <div>
@@ -157,9 +172,9 @@ export function ResultPage() {
               </h2>
 
               <p className={styles.disclaimerText}>
-                Модель учитывает расположение и параметры квартиры, но не видит ремонт,
-                вид из окон и состояние дома. Используйте результат как ориентир —
-                это не заключение профессионального оценщика.
+                Модель учитывает расположение и параметры квартиры, но не видит ремонт, вид из окон
+                и состояние дома. Используйте результат как ориентир — это не заключение
+                профессионального оценщика.
               </p>
             </div>
           </aside>

@@ -1,4 +1,4 @@
-import {cn} from "@src/shared/lib";
+import { cn } from "@src/shared/lib";
 
 import styles from "./Spinner.module.scss";
 
@@ -7,12 +7,6 @@ interface SpinnerProps {
   label?: string;
 }
 
-export function Spinner({className, label = "Загрузка"}: SpinnerProps) {
-  return (
-    <span
-      className={cn(styles.spinner, className)}
-      role="status"
-      aria-label={label}
-    />
-  );
+export function Spinner({ className, label = "Загрузка" }: SpinnerProps) {
+  return <span className={cn(styles.spinner, className)} role="status" aria-label={label} />;
 }

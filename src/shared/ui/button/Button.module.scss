@@ -12,10 +12,11 @@
 
   cursor: pointer;
 
-  transition: background-color 0.2s ease,
-  color 0.2s ease,
-  opacity 0.2s ease,
-  transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
 
   &:focus-visible {
     box-shadow: 0 0 0 4px var(--focus-ring);

@@ -1,7 +1,7 @@
-import type {ReactNode} from "react";
+import type { ReactNode } from "react";
 
-import type {PropertyType} from "@src/entities/property";
-import {ArrowIcon} from "@src/shared/assets/icons";
+import type { PropertyType } from "@src/entities/property";
+import { ArrowIcon } from "@src/shared/assets/icons";
 
 import styles from "./PropertyTypeCard.module.scss";
 
@@ -40,12 +40,10 @@ export function PropertyTypeCard({
           {beta && <span className={styles.beta}>Beta</span>}
         </span>
 
-        {description && (
-          <span className={styles.description}>{description}</span>
-        )}
+        {description && <span className={styles.description}>{description}</span>}
       </span>
 
-      {!beta && <ArrowIcon className={styles.arrow} aria-hidden="true"/>}
+      {!beta && <ArrowIcon className={styles.arrow} aria-hidden="true" />}
     </button>
   );
 }

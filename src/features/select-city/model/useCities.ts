@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
-import {getCities, type City} from "@src/entities/city";
-import {getErrorMessage, isAbortError} from "@src/shared/api";
+import { getCities, type City } from "@src/entities/city";
+import { getErrorMessage, isAbortError } from "@src/shared/api";
 
 interface CitiesState {
   cities: City[];
@@ -20,7 +20,7 @@ export function useCities(): CitiesState {
     const controller = new AbortController();
 
     getCities(controller.signal)
-      .then((cities) => setState({cities, isLoading: false, error: null}))
+      .then((cities) => setState({ cities, isLoading: false, error: null }))
       .catch((error: unknown) => {
         if (isAbortError(error)) {
           return;

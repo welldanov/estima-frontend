@@ -1,6 +1,6 @@
-import type {InputHTMLAttributes, ReactNode, Ref} from "react";
+import type { InputHTMLAttributes, ReactNode, Ref } from "react";
 
-import {cn} from "@src/shared/lib";
+import { cn } from "@src/shared/lib";
 
 import styles from "./Input.module.scss";
 

@@ -1,10 +1,15 @@
-import type {SubmitEventHandler} from "react";
-import {Navigate} from "react-router-dom";
+import type { SubmitEventHandler } from "react";
+import { Navigate } from "react-router-dom";
 
-import {AddressSearch} from "@src/features/search-address";
-import {CitySelect} from "@src/features/select-city";
-import {getStepNumber, useStepForward, useValuationStore, VALUATION_STEPS_TOTAL} from "@src/features/valuation";
-import {Button, StepIndicator} from "@src/shared/ui";
+import { AddressSearch } from "@src/features/search-address";
+import { CitySelect } from "@src/features/select-city";
+import {
+  getStepNumber,
+  useStepForward,
+  useValuationStore,
+  VALUATION_STEPS_TOTAL,
+} from "@src/features/valuation";
+import { Button, StepIndicator } from "@src/shared/ui";
 
 import styles from "./AddressPage.module.scss";
 
@@ -19,7 +24,7 @@ export function AddressPage() {
   const setAddress = useValuationStore((state) => state.setAddress);
 
   if (!propertyType) {
-    return <Navigate to="/" replace/>;
+    return <Navigate to="/" replace />;
   }
 
   const canContinue = cityId != null && address != null;
@@ -36,7 +41,7 @@ export function AddressPage() {
     <main className={styles.page}>
       <div className={styles.container}>
         <header>
-          <StepIndicator current={getStepNumber("address")} total={VALUATION_STEPS_TOTAL}/>
+          <StepIndicator current={getStepNumber("address")} total={VALUATION_STEPS_TOTAL} />
 
           <h1 className={styles.title}>Где находится объект?</h1>
           <p className={styles.description}>Укажите город и адрес объекта</p>
@@ -44,7 +49,7 @@ export function AddressPage() {
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           <div className={styles.fields}>
-            <CitySelect propertyType={propertyType} value={cityId} onChange={setCityId}/>
+            <CitySelect propertyType={propertyType} value={cityId} onChange={setCityId} />
 
             <AddressSearch
               key={cityId ?? "no-city"}

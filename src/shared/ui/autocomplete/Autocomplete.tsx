@@ -1,14 +1,16 @@
-import {useEffect, useId, useRef, useState, type KeyboardEvent} from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 
-import {CloseIcon} from "@src/shared/assets/icons";
-import {cn, handleEnterKeyHint} from "@src/shared/lib";
-import {Input, type InputProps} from "../input";
-import {Spinner} from "../spinner";
+import { CloseIcon } from "@src/shared/assets/icons";
+import { cn, handleEnterKeyHint } from "@src/shared/lib";
+import { Input, type InputProps } from "../input";
+import { Spinner } from "../spinner";
 
 import styles from "./Autocomplete.module.scss";
 
-export interface AutocompleteProps<T>
-  extends Omit<InputProps, "value" | "onChange" | "onSelect" | "role"> {
+export interface AutocompleteProps<T> extends Omit<
+  InputProps,
+  "value" | "onChange" | "onSelect" | "role"
+> {
   value: string;
   onValueChange: (value: string) => void;
 
@@ -28,7 +30,6 @@ export interface AutocompleteProps<T>
   blurOnSelect?: boolean;
 }
 
-// Отступ списка от нижнего края видимой области (над клавиатурой)
 const LIST_VIEWPORT_GAP = 12;
 const LIST_MIN_HEIGHT = 120;
 
@@ -63,7 +64,7 @@ export function Autocomplete<T>({
   const safeActiveIndex = activeIndex < items.length ? activeIndex : -1;
 
   const isClearVisible = Boolean(clearable && onClear && value && !inputProps.disabled);
-  const endContent = loading ? <Spinner label="Поиск"/> : endSlot;
+  const endContent = loading ? <Spinner label="Поиск" /> : endSlot;
 
   const getOptionId = (index: number) => `${listId}-option-${index}`;
 
@@ -72,9 +73,7 @@ export function Autocomplete<T>({
       return;
     }
 
-    document
-      .getElementById(getOptionId(safeActiveIndex))
-      ?.scrollIntoView({block: "nearest"});
+    document.getElementById(getOptionId(safeActiveIndex))?.scrollIntoView({ block: "nearest" });
   });
 
   // Список не должен уходить под клавиатуру: ограничиваем высоту видимой областью (visualViewport)
@@ -191,38 +190,40 @@ export function Autocomplete<T>({
           isListVisible && safeActiveIndex >= 0 ? getOptionId(safeActiveIndex) : undefined
         }
         value={value}
-        endSlot={(isClearVisible || endContent) && (
-          <>
-            {isClearVisible && (
-              <button
-                type="button"
-                className={styles.clear}
-                aria-label="Очистить"
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={(event) => {
-                  onClear?.();
-                  setActiveIndex(-1);
+        endSlot={
+          (isClearVisible || endContent) && (
+            <>
+              {isClearVisible && (
+                <button
+                  type="button"
+                  className={styles.clear}
+                  aria-label="Очистить"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={(event) => {
+                    onClear?.();
+                    setActiveIndex(-1);
 
-                  const input = getInput();
+                    const input = getInput();
 
-                  if (focusOnClear) {
-                    input?.focus();
-                    return;
-                  }
+                    if (focusOnClear) {
+                      input?.focus();
+                      return;
+                    }
 
-                  // Не даём клику всплыть до обёртки, которая открывает список
-                  event.stopPropagation();
-                  input?.blur();
-                  setIsOpen(false);
-                }}
-              >
-                <CloseIcon aria-hidden/>
-              </button>
-            )}
+                    // Не даём клику всплыть до обёртки, которая открывает список
+                    event.stopPropagation();
+                    input?.blur();
+                    setIsOpen(false);
+                  }}
+                >
+                  <CloseIcon aria-hidden />
+                </button>
+              )}
 
-            {endContent}
-          </>
-        )}
+              {endContent}
+            </>
+          )
+        }
         onChange={(event) => {
           onValueChange(event.target.value);
           setIsOpen(true);
@@ -271,9 +272,7 @@ export function Autocomplete<T>({
                 >
                   <span className={styles.optionLabel}>{getItemLabel(item)}</span>
 
-                  {description && (
-                    <span className={styles.optionDescription}>{description}</span>
-                  )}
+                  {description && <span className={styles.optionDescription}>{description}</span>}
                 </li>
               );
             })

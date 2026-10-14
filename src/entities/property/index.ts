@@ -1,3 +1,1 @@
-export type {
-    PropertyType,
-} from "./model/types";
+export type { PropertyType } from "./model/types";

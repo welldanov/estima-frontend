@@ -1,6 +1,6 @@
-import type {ReactNode} from "react";
+import type { ReactNode } from "react";
 
-import {cn} from "@src/shared/lib";
+import { cn } from "@src/shared/lib";
 
 import styles from "./Field.module.scss";
 
@@ -13,7 +13,7 @@ interface FieldProps {
   children: ReactNode;
 }
 
-export function Field({label, htmlFor, hint, error, className, children}: FieldProps) {
+export function Field({ label, htmlFor, hint, error, className, children }: FieldProps) {
   return (
     <div className={cn(styles.field, className)}>
       <label htmlFor={htmlFor} className={styles.label}>

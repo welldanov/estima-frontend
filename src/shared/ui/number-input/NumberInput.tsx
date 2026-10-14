@@ -1,8 +1,8 @@
-import {useState, type ChangeEvent, type InputHTMLAttributes, type KeyboardEvent} from "react";
+import { useState, type ChangeEvent, type InputHTMLAttributes, type KeyboardEvent } from "react";
 
-import {handleEnterKeyHint} from "@src/shared/lib";
+import { handleEnterKeyHint } from "@src/shared/lib";
 
-import {Input} from "../input";
+import { Input } from "../input";
 
 import styles from "./NumberInput.module.scss";
 
@@ -66,11 +66,11 @@ export function NumberInput({
   const [draft, setDraft] = useState(() => format(value));
 
   // Значение поменяли снаружи (кнопки ±, сброс стора) — показываем его, а не черновик.
-  const displayed = parse(draft) === value ? draft.replace(".", ",") : format(value).replace(".", ",");
+  const displayed =
+    parse(draft) === value ? draft.replace(".", ",") : format(value).replace(".", ",");
 
-  const pattern = fractionDigits > 0
-    ? new RegExp(String.raw`^\d*(\.\d{0,${fractionDigits}})?$`)
-    : /^\d*$/;
+  const pattern =
+    fractionDigits > 0 ? new RegExp(String.raw`^\d*(\.\d{0,${fractionDigits}})?$`) : /^\d*$/;
 
   const commit = (next: number | null) => {
     setDraft(format(next));
