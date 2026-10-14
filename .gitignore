@@ -45,3 +45,9 @@ coverage
 # OS
 Thumbs.db
 desktop.ini
+
+# Playwright / Lighthouse
+playwright-report
+test-results
+blob-report
+.lighthouseci
