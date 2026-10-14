@@ -13,8 +13,9 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 
-  transition: background-color var(--motion-fast) var(--ease-out),
-  transform var(--motion-fast) var(--ease-out);
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
 
   @media (hover: hover) {
     &:hover {

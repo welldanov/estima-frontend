@@ -1,23 +1,23 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
-import {predictApartment} from "@src/entities/prediction";
-import type {Prediction} from "@src/entities/prediction";
-import {ApiError, getErrorMessage, isAbortError} from "@src/shared/api";
+import { predictApartment } from "@src/entities/prediction";
+import type { Prediction } from "@src/entities/prediction";
+import { ApiError, getErrorMessage, isAbortError } from "@src/shared/api";
 
-import {validateApartment} from "./apartment";
-import {useValuationStore} from "./valuationStore";
+import { validateApartment } from "./apartment";
+import { useValuationStore } from "./valuationStore";
 
 // Бэкенд отвечает за доли секунды — без минимума загрузка мелькает и выглядит как сбой.
 const MIN_LOADING_MS = 800;
 
 export type PredictionState =
-  | {status: "loading"}
-  | {status: "success"; result: Prediction}
+  | { status: "loading" }
+  | { status: "success"; result: Prediction }
   /**
    * `retry` — только для сбоев сети/сервера (5xx). Ошибки 4xx (адрес без дома, вне зоны покрытия,
    * город без модели) повтором не лечатся — пользователь должен сменить адрес.
    */
-  | {status: "error"; message: string; retry: (() => void) | null};
+  | { status: "error"; message: string; retry: (() => void) | null };
 
 interface Failure {
   attempt: number;
@@ -47,18 +47,26 @@ export function usePrediction(): PredictionState {
   const [failure, setFailure] = useState<Failure | null>(null);
   const [attempt, setAttempt] = useState(0);
 
-  const {areaM2, rooms, isStudio, floor, floorsTotal} = apartment;
+  const { areaM2, rooms, isStudio, floor, floorsTotal } = apartment;
 
   useEffect(() => {
-    const {isValid} = validateApartment({areaM2, rooms, isStudio, floor, floorsTotal});
+    const { isValid } = validateApartment({ areaM2, rooms, isStudio, floor, floorsTotal });
 
-    if (result || !isValid || propertyType !== "apartment" || cityId == null || !addressUri
-      || areaM2 == null || floor == null || floorsTotal == null) {
+    if (
+      result ||
+      !isValid ||
+      propertyType !== "apartment" ||
+      cityId == null ||
+      !addressUri ||
+      areaM2 == null ||
+      floor == null ||
+      floorsTotal == null
+    ) {
       return;
     }
 
     const controller = new AbortController();
-    const params = {cityId, addressUri, areaM2, rooms, isStudio, floor, floorsTotal};
+    const params = { cityId, addressUri, areaM2, rooms, isStudio, floor, floorsTotal };
 
     // allSettled: минимум загрузки держим и при ошибке — иначе быстрый отказ (бэкенд лежит)
     // мелькает «загрузка → ошибка» за один кадр после «Повторить».
@@ -80,10 +88,22 @@ export function usePrediction(): PredictionState {
     });
 
     return () => controller.abort();
-  }, [result, propertyType, cityId, addressUri, areaM2, rooms, isStudio, floor, floorsTotal, attempt, setResult]);
+  }, [
+    result,
+    propertyType,
+    cityId,
+    addressUri,
+    areaM2,
+    rooms,
+    isStudio,
+    floor,
+    floorsTotal,
+    attempt,
+    setResult,
+  ]);
 
   if (result) {
-    return {status: "success", result};
+    return { status: "success", result };
   }
 
   if (failure?.attempt === attempt) {
@@ -94,5 +114,5 @@ export function usePrediction(): PredictionState {
     };
   }
 
-  return {status: "loading"};
+  return { status: "loading" };
 }

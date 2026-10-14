@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
-import {searchAddresses, type AddressSuggestion} from "@src/entities/address";
-import type {PropertyType} from "@src/entities/property";
-import {getErrorMessage, isAbortError} from "@src/shared/api";
-import {useDebouncedValue} from "@src/shared/lib";
+import { searchAddresses, type AddressSuggestion } from "@src/entities/address";
+import type { PropertyType } from "@src/entities/property";
+import { getErrorMessage, isAbortError } from "@src/shared/api";
+import { useDebouncedValue } from "@src/shared/lib";
 
 const MIN_QUERY_LENGTH = 2;
 const DEBOUNCE_MS = 300;
@@ -30,10 +30,11 @@ export function useAddressSuggestions(
   const debouncedQuery = useDebouncedValue(trimmedQuery, DEBOUNCE_MS);
 
   // Текущий запрос тоже проверяем: после очистки поля старые подсказки не должны висеть до конца debounce
-  const canSearch = enabled
-    && cityId != null
-    && trimmedQuery.length >= MIN_QUERY_LENGTH
-    && debouncedQuery.length >= MIN_QUERY_LENGTH;
+  const canSearch =
+    enabled &&
+    cityId != null &&
+    trimmedQuery.length >= MIN_QUERY_LENGTH &&
+    debouncedQuery.length >= MIN_QUERY_LENGTH;
   const requestKey = canSearch ? `${cityId}:${propertyType}:${debouncedQuery}` : null;
 
   const [result, setResult] = useState<SearchResult | null>(null);
@@ -45,8 +46,8 @@ export function useAddressSuggestions(
 
     const controller = new AbortController();
 
-    searchAddresses({cityId, propertyType, query: debouncedQuery}, controller.signal)
-      .then((items) => setResult({key: requestKey, items, error: null}))
+    searchAddresses({ cityId, propertyType, query: debouncedQuery }, controller.signal)
+      .then((items) => setResult({ key: requestKey, items, error: null }))
       .catch((error: unknown) => {
         if (!isAbortError(error)) {
           setResult({
@@ -61,9 +62,8 @@ export function useAddressSuggestions(
   }, [requestKey, cityId, propertyType, debouncedQuery]);
 
   const isFresh = requestKey !== null && result?.key === requestKey;
-  const isTyping = enabled
-    && trimmedQuery !== debouncedQuery
-    && trimmedQuery.length >= MIN_QUERY_LENGTH;
+  const isTyping =
+    enabled && trimmedQuery !== debouncedQuery && trimmedQuery.length >= MIN_QUERY_LENGTH;
 
   return {
     items: isFresh ? result.items : [],

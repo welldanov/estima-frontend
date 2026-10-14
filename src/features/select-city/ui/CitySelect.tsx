@@ -1,11 +1,11 @@
-import {useId, useState} from "react";
+import { useId, useState } from "react";
 
-import type {PropertyType} from "@src/entities/property";
+import type { PropertyType } from "@src/entities/property";
 
-import {ArrowIcon} from "@src/shared/assets/icons";
-import {Autocomplete, Field} from "@src/shared/ui";
+import { ArrowIcon } from "@src/shared/assets/icons";
+import { Autocomplete, Field } from "@src/shared/ui";
 
-import {useCities} from "../model/useCities";
+import { useCities } from "../model/useCities";
 
 import styles from "./CitySelect.module.scss";
 
@@ -16,9 +16,9 @@ interface CitySelectProps {
   onChange: (cityId: number | null) => void;
 }
 
-export function CitySelect({propertyType, value, onChange}: CitySelectProps) {
+export function CitySelect({ propertyType, value, onChange }: CitySelectProps) {
   const id = useId();
-  const {cities: allCities, isLoading, error} = useCities();
+  const { cities: allCities, isLoading, error } = useCities();
 
   const cities = allCities.filter((city) => city.propertyTypes.includes(propertyType));
 
@@ -47,7 +47,7 @@ export function CitySelect({propertyType, value, onChange}: CitySelectProps) {
         emptyText="Город не найден"
         loading={isLoading}
         // Когда город выбран, стрелку заменяет крестик очистки
-        endSlot={value == null && <ArrowIcon className={styles.chevron} aria-hidden/>}
+        endSlot={value == null && <ArrowIcon className={styles.chevron} aria-hidden />}
         onValueChange={setQuery}
         onSelect={(city) => {
           setQuery(null);

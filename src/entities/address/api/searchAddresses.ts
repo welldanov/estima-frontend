@@ -1,7 +1,7 @@
-import {request} from "@src/shared/api";
-import type {PropertyType} from "@src/entities/property";
+import { request } from "@src/shared/api";
+import type { PropertyType } from "@src/entities/property";
 
-import type {AddressKind, AddressSuggestion} from "../model/types";
+import type { AddressKind, AddressSuggestion } from "../model/types";
 
 interface SearchAddressesParams {
   cityId: number;
@@ -21,7 +21,7 @@ interface SearchAddressesResponse {
 }
 
 export async function searchAddresses(
-  {cityId, propertyType, query}: SearchAddressesParams,
+  { cityId, propertyType, query }: SearchAddressesParams,
   signal?: AbortSignal,
 ): Promise<AddressSuggestion[]> {
   const params = new URLSearchParams({
@@ -32,7 +32,7 @@ export async function searchAddresses(
 
   const data = await request<SearchAddressesResponse>(
     `/api/addresses/search?${params.toString()}`,
-    {signal},
+    { signal },
   );
 
   return data.items.map((item) => ({

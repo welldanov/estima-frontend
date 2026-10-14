@@ -1,4 +1,1 @@
-export type PropertyType =
-    | "apartment"
-    | "house"
-    | "land";
+export type PropertyType = "apartment" | "house" | "land";

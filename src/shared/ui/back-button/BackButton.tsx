@@ -1,7 +1,7 @@
-import type {ButtonHTMLAttributes} from "react";
+import type { ButtonHTMLAttributes } from "react";
 
-import {cn} from "@src/shared/lib";
-import {ArrowIcon} from "@src/shared/assets/icons";
+import { cn } from "@src/shared/lib";
+import { ArrowIcon } from "@src/shared/assets/icons";
 
 import styles from "./BackButton.module.scss";
 
@@ -9,7 +9,12 @@ interface BackButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
   label?: string;
 }
 
-export function BackButton({label = "Назад", className, type = "button", ...props}: BackButtonProps) {
+export function BackButton({
+  label = "Назад",
+  className,
+  type = "button",
+  ...props
+}: BackButtonProps) {
   return (
     <button
       type={type}
@@ -18,7 +23,7 @@ export function BackButton({label = "Назад", className, type = "button", ..
       title={label}
       {...props}
     >
-      <ArrowIcon className={styles.icon} aria-hidden/>
+      <ArrowIcon className={styles.icon} aria-hidden />
     </button>
   );
 }

@@ -6,9 +6,11 @@ function getNextField(input: HTMLInputElement): HTMLInputElement | null {
       element instanceof HTMLInputElement && !element.disabled && !SKIPPED_TYPES.has(element.type),
   );
 
-  return fields.find(
-    (field) => input.compareDocumentPosition(field) & Node.DOCUMENT_POSITION_FOLLOWING,
-  ) ?? null;
+  return (
+    fields.find(
+      (field) => input.compareDocumentPosition(field) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ) ?? null
+  );
 }
 
 /**

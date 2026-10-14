@@ -1,1 +1,1 @@
-export {StepIndicator} from "./StepIndicator";
+export { StepIndicator } from "./StepIndicator";

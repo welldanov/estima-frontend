@@ -1,7 +1,7 @@
-import {request} from "@src/shared/api";
-import type {PropertyType} from "@src/entities/property";
+import { request } from "@src/shared/api";
+import type { PropertyType } from "@src/entities/property";
 
-import type {City} from "../model/types";
+import type { City } from "../model/types";
 
 interface CityResponse {
   id: number;
@@ -10,7 +10,7 @@ interface CityResponse {
 }
 
 export async function getCities(signal?: AbortSignal): Promise<City[]> {
-  const data = await request<CityResponse[]>("/api/cities", {signal});
+  const data = await request<CityResponse[]>("/api/cities", { signal });
 
   return data.map((city) => ({
     id: city.id,

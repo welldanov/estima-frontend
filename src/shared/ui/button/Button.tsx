@@ -1,7 +1,7 @@
-import type {ButtonHTMLAttributes, ReactNode, Ref} from "react";
+import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
 
-import {cn} from "@src/shared/lib";
-import {Spinner} from "../spinner";
+import { cn } from "@src/shared/lib";
+import { Spinner } from "../spinner";
 
 import styles from "./Button.module.scss";
 
@@ -46,9 +46,13 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <Spinner/>
+        <Spinner />
       ) : (
-        icon && <span className={styles.icon} aria-hidden="true">{icon}</span>
+        icon && (
+          <span className={styles.icon} aria-hidden="true">
+            {icon}
+          </span>
+        )
       )}
 
       {children}

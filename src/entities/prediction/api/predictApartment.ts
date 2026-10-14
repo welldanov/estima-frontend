@@ -1,6 +1,6 @@
-import {request} from "@src/shared/api";
+import { request } from "@src/shared/api";
 
-import type {ApartmentPredictionParams, Prediction} from "../model/types";
+import type { ApartmentPredictionParams, Prediction } from "../model/types";
 
 interface PredictionResponse {
   predicted_price: number;
@@ -19,12 +19,12 @@ export async function predictApartment(
 ): Promise<Prediction> {
   const data = await request<PredictionResponse>("/api/predict", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     signal,
     body: JSON.stringify({
       property_type: "apartment",
       city_id: params.cityId,
-      address: {uri: params.addressUri},
+      address: { uri: params.addressUri },
       area_m2: params.areaM2,
       rooms: params.rooms,
       is_studio: params.isStudio,

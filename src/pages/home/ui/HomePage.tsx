@@ -1,7 +1,6 @@
-
-import {useStepForward, useValuationStore} from "@src/features/valuation";
-import {PropertyTypeSelector} from "@src/features/select-property-type";
-import type {PropertyType} from "@src/entities/property";
+import { useStepForward, useValuationStore } from "@src/features/valuation";
+import { PropertyTypeSelector } from "@src/features/select-property-type";
+import type { PropertyType } from "@src/entities/property";
 
 import homeImage from "@src/shared/assets/images/home-illustration.webp";
 
@@ -29,13 +28,10 @@ export function HomePage() {
         </header>
 
         <div className={styles.illustration}>
-          <img src={homeImage} alt="" width={800} height={500} fetchPriority="high"/>
+          <img src={homeImage} alt="" width={800} height={500} fetchPriority="high" />
         </div>
 
-        <PropertyTypeSelector
-          onChange={handlePropertyTypeChange}
-          className={styles.selector}
-        />
+        <PropertyTypeSelector onChange={handlePropertyTypeChange} className={styles.selector} />
       </div>
     </main>
   );

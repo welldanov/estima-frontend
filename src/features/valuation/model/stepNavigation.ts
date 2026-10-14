@@ -1,4 +1,4 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface StepLocationState {
   /** Шаг, с которого пришли кнопкой визарда — значит, он лежит в истории прямо перед текущим */
@@ -8,10 +8,10 @@ interface StepLocationState {
 /** Переход на следующий шаг: запоминаем, откуда пришли, чтобы «назад» мог вернуться по истории. */
 export function useStepForward() {
   const navigate = useNavigate();
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
 
   return (to: string) => {
-    navigate(to, {state: {from: pathname} satisfies StepLocationState});
+    navigate(to, { state: { from: pathname } satisfies StepLocationState });
   };
 }
 
@@ -30,7 +30,7 @@ export function useStepBack() {
     if (state?.from === backTo) {
       navigate(-1);
     } else {
-      navigate(backTo, {replace: true});
+      navigate(backTo, { replace: true });
     }
   };
 }

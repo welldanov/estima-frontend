@@ -1,4 +1,4 @@
-import type {PropertyType} from "@src/entities/property";
+import type { PropertyType } from "@src/entities/property";
 
 export interface City {
   id: number;

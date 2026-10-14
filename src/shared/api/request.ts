@@ -32,7 +32,7 @@ export async function request<T>(url: string, init?: RequestInit): Promise<T> {
     throw new ApiError(response.status, await readDetail(response));
   }
 
-  return await response.json() as Promise<T>;
+  return (await response.json()) as Promise<T>;
 }
 
 export function isAbortError(error: unknown): boolean {
