@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import babel from "@rolldown/plugin-babel";
 import { fileURLToPath, URL } from "node:url";
@@ -11,6 +12,12 @@ export default defineConfig({
     alias: {
       "@src": fileURLToPath(new URL("./src", import.meta.url)),
     },
+  },
+  test: {
+    environment: "node",
+    include: ["src/**/*.test.ts"],
+    restoreMocks: true,
+    unstubGlobals: true,
   },
   server: {
     proxy: {
