@@ -32,6 +32,6 @@ export default defineConfig([
         },
       ],
     },
-    prettier,
   },
+  prettier,
 ]);
